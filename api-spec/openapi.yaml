@@ -1,0 +1,396 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: Attendance Tracker Dashboard API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: subjects
+    description: Subject management
+  - name: dashboard
+    description: Dashboard operations
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /subjects:
+    get:
+      operationId: getSubjects
+      tags: [subjects]
+      summary: Get all subjects for the current user
+      responses:
+        "200":
+          description: List of subjects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Subject"
+        "401":
+          description: Unauthorized
+
+    post:
+      operationId: createSubject
+      tags: [subjects]
+      summary: Create a new subject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubjectInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subject"
+        "401":
+          description: Unauthorized
+
+  /subjects/{id}:
+    get:
+      operationId: getSubject
+      tags: [subjects]
+      summary: Get a subject by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Subject details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subject"
+        "404":
+          description: Not found
+        "401":
+          description: Unauthorized
+
+    patch:
+      operationId: updateSubject
+      tags: [subjects]
+      summary: Update a subject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubjectUpdate"
+      responses:
+        "200":
+          description: Updated subject
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subject"
+        "404":
+          description: Not found
+        "401":
+          description: Unauthorized
+
+    delete:
+      operationId: deleteSubject
+      tags: [subjects]
+      summary: Delete a subject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+        "401":
+          description: Unauthorized
+
+  /subjects/{id}/present:
+    post:
+      operationId: markPresent
+      tags: [subjects]
+      summary: Mark attendance as present for a subject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Updated subject
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subject"
+        "404":
+          description: Not found
+        "401":
+          description: Unauthorized
+
+  /subjects/{id}/absent:
+    post:
+      operationId: markAbsent
+      tags: [subjects]
+      summary: Mark attendance as absent for a subject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Updated subject
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subject"
+        "404":
+          description: Not found
+        "401":
+          description: Unauthorized
+
+  /subjects/{id}/undo-present:
+    post:
+      operationId: undoPresent
+      tags: [subjects]
+      summary: Undo the last present mark for a subject (decrement by 1, min 0)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Updated subject
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subject"
+        "404":
+          description: Not found
+        "401":
+          description: Unauthorized
+
+  /subjects/{id}/undo-absent:
+    post:
+      operationId: undoAbsent
+      tags: [subjects]
+      summary: Undo the last absent mark for a subject (decrement by 1, min 0)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Updated subject
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subject"
+        "404":
+          description: Not found
+        "401":
+          description: Unauthorized
+
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Get overall dashboard stats for the current user
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+        "401":
+          description: Unauthorized
+
+  /dashboard/share:
+    post:
+      operationId: createShareToken
+      tags: [dashboard]
+      summary: Generate or regenerate a shareable report token for the current user
+      responses:
+        "200":
+          description: Share token created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShareToken"
+        "401":
+          description: Unauthorized
+    delete:
+      operationId: revokeShareToken
+      tags: [dashboard]
+      summary: Revoke the current user's shareable report token
+      responses:
+        "204":
+          description: Token revoked
+        "401":
+          description: Unauthorized
+
+  /dashboard:
+    delete:
+      operationId: deleteDashboard
+      tags: [dashboard]
+      summary: Delete the current user's dashboard and all subjects
+      responses:
+        "204":
+          description: Dashboard deleted
+        "401":
+          description: Unauthorized
+
+  /reports/{token}:
+    get:
+      operationId: getPublicReport
+      tags: [dashboard]
+      summary: Get a public read-only attendance report by share token (no auth required)
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Public attendance report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicReport"
+        "404":
+          description: Token not found or revoked
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    Subject:
+      type: object
+      required: [id, userId, name, presentCount, absentCount, createdAt]
+      properties:
+        id:
+          type: integer
+        userId:
+          type: string
+        name:
+          type: string
+        presentCount:
+          type: integer
+        absentCount:
+          type: integer
+        createdAt:
+          type: string
+
+    SubjectInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+
+    SubjectUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+
+    DashboardSummary:
+      type: object
+      required: [totalSubjects, totalPresent, totalAbsent, overallPercentage, safeCount, atRiskCount]
+      properties:
+        totalSubjects:
+          type: integer
+        totalPresent:
+          type: integer
+        totalAbsent:
+          type: integer
+        overallPercentage:
+          type: number
+        safeCount:
+          type: integer
+        atRiskCount:
+          type: integer
+
+    ShareToken:
+      type: object
+      required: [token]
+      properties:
+        token:
+          type: string
+
+    PublicReportSubject:
+      type: object
+      required: [id, name, presentCount, absentCount]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        presentCount:
+          type: integer
+        absentCount:
+          type: integer
+
+    PublicReport:
+      type: object
+      required: [subjects, generatedAt, totalPresent, totalAbsent, overallPercentage]
+      properties:
+        subjects:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicReportSubject"
+        generatedAt:
+          type: string
+        totalPresent:
+          type: integer
+        totalAbsent:
+          type: integer
+        overallPercentage:
+          type: number
