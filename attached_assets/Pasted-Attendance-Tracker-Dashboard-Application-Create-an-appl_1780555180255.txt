@@ -1,0 +1,190 @@
+Attendance Tracker Dashboard Application
+
+Create an application named Attendance Tracker Dashboard.
+
+Dashboard Creation
+
+When the application starts, there should be:
+
+- A text input field to enter the user's name.
+- A Create Dashboard button.
+
+After clicking Create Dashboard, a personalized dashboard should be created for that user.
+
+At the top of the dashboard, display:
+
+Hi, [User Name]
+
+The dashboard data should be stored and saved so that the user can continue updating it later.
+
+There should also be a Delete Dashboard option that permanently deletes the created dashboard and all associated data.
+
+---
+
+Subject Management
+
+The dashboard should contain a + Add Subject button.
+
+When the user clicks this button:
+
+- A new subject section/card should be created.
+- The user can enter the subject name.
+
+Each subject card should contain:
+
+- Subject Name
+- Present Button
+- Absent Button
+
+The user will update attendance daily by pressing these buttons.
+
+For example:
+
+- Present pressed 4 times
+- Absent pressed 3 times
+
+Then the subject card should display:
+
+- Attendance: 4/7
+- Percentage: 57.14%
+
+where:
+
+Present / Total Classes × 100
+
+---
+
+Attendance Status
+
+At Risk
+
+If attendance percentage is below 75%:
+
+- The card design should change to a red-themed style.
+- The card should display:
+
+At Risk
+
+near the subject name or directly below it.
+
+Safe
+
+If attendance percentage is 75% or higher:
+
+- The card design should change to a green-themed style.
+- The card should display:
+
+Safe
+
+near the subject name or directly below it.
+
+The attendance data should remain editable and updateable day by day.
+
+---
+
+Overall Attendance
+
+The dashboard should calculate and display an overall attendance percentage using all subjects combined.
+
+This section should display only:
+
+- Total Attendance Percentage
+
+It should NOT display "Safe" or "At Risk".
+
+---
+
+Guidance Section
+
+Below all subject cards, there should be an Update button.
+
+When the user clicks Update, a guidance report should be generated.
+
+The report should begin with:
+
+Hi, [User Name], here's your guidance.
+
+---
+
+Subject-wise Guidance
+
+For every subject, display:
+
+- Subject Name
+- Present Count
+- Absent Count
+- Current Attendance Percentage
+
+Case 1: Attendance Below 75%
+
+The system should calculate how many consecutive classes must be attended to reach 75%.
+
+Example:
+
+- Present = 28
+- Absent = 10
+
+Current Attendance:
+
+28 / 38 = 73.68%
+
+To reach 75%, the student must attend 2 more consecutive classes.
+
+The report should display:
+
+- Present: 28
+- Absent: 10
+- Have to Attend: 2 Classes
+
+---
+
+Case 2: Attendance 75% or Above
+
+The system should calculate how many future classes can be missed while still maintaining at least 75% attendance.
+
+Example:
+
+- Present = 37
+- Absent = 11
+
+Attendance:
+
+37 / 48 = 77.08%
+
+If one future class is missed:
+
+37 / 49 = 75.51%
+
+If two future classes are missed:
+
+37 / 50 = 74%
+
+Therefore only 1 class can be missed safely.
+
+The report should display:
+
+- Present: 37
+- Absent: 11
+- Safe Status
+- 1 Class Can Be Left Safely
+
+This calculation should be performed separately for every subject.
+
+---
+
+User Interface
+
+The UI should be modern, clean, responsive, and visually attractive.
+
+Use card-based sections similar to a professional attendance dashboard.
+
+Suggested visual indicators:
+
+- Green theme for Safe subjects
+- Red theme for At Risk subjects
+- Progress bars for attendance percentage
+- Subject-wise attendance cards
+- Dashboard summary section at the top
+- Mobile-friendly design
+
+The application should automatically save all data so that users do not lose their attendance records after closing the application.
